@@ -1,0 +1,32 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Install the Picasa Module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function picasa_install() {
+  // Create variables here.
+  variable_set('picasa_albumuser_1', '');
+  variable_set('picasa_albumid_1', '');
+  variable_set('picasa_photoid_1', '');
+  variable_set('picasa_gallery_name', 'gallery');
+  variable_set('picasa_full_size', 600);
+  variable_set('picasa_thumbnail_size', 150);  
+} // function picasa_install()
+
+/**
+ * Implements hook_uninstall().
+ */
+function picasa_uninstall() {
+  // Remove variables here
+  variable_del('picasa_albumuser_1');
+  variable_del('picasa_albumid_1');
+  variable_del('picasa_photoid_1');
+  variable_del('picasa_gallery_name');
+  variable_del('picasa_full_size');
+  variable_del('picasa_thumbnail_size');  
+} // function picasa_uninstall()

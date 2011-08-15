@@ -1,0 +1,200 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Display Picasa galleries on your site.
+ */
+
+/*
+// Enable error reporting
+error_reporting(-1);
+$conf['error_level'] = 2;
+ini_set('display_errors', TRUE);
+ini_set('display_startup_errors', TRUE);
+*/
+/**
+ * Implements hook_permission().
+ * Valid permissions for this module
+ * @return array An array of valid permissions for the onthisdate module
+ */
+function picasa_permission() {
+  return array(
+    'access picasa' => array(
+      'title' => t('Access Picasa Module'),
+      'description' => t('View picasa module content.'),
+    ),
+    'administer picasa' => array(
+      'title' => t('Administer Picasa Module'),
+      'description' => t('Perform administration tasks for picasa module.'),
+    ),
+  );
+} // function picasa_permission()
+
+/**
+ * Implements hook_admin().
+ */
+function picasa_admin() {
+  $form = array();
+
+  // TODO: Create a manual to teach users how to find album/photo id and username information
+
+  //
+  // TODO: Add an ajax-ified gallery adding section
+  // with an add more button and a field for username, 
+  // album id, and preview photo id (which should 
+  // default to the first photo in the album)
+  //
+
+  $form['picasa_albumuser_1'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Picasa Username'),
+    '#default_value' => variable_get('picasa_albumuser_1', ''),
+    '#size' => 64,
+    '#maxlength' => 64,
+    '#description' => t("The username for the gallery you would like to pull from."),
+    '#required' => TRUE,
+  );
+
+  $form['picasa_albumid_1'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Picasa Album ID'),
+    '#default_value' => variable_get('picasa_albumid_1', ''),
+    '#size' => 64,
+    '#maxlength' => 64,
+    '#description' => t("ID of the Album you would like to create a gallery from."),
+    '#required' => TRUE,
+  );
+
+  $form['picasa_photoid_1'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Preview Photo ID'),
+    '#default_value' => variable_get('picasa_photoid_1', ''),
+    '#size' => 64,
+    '#maxlength' => 64,
+    '#description' => t("ID of the photo you would like to have as the preview image for the gallery."),
+    '#required' => TRUE,
+  );
+
+  $form['picasa_gallery_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Gallery Name'),
+    '#default_value' => variable_get('picasa_gallery_name', 'gallery'),
+    '#size' => 64,
+    '#maxlength' => 64,
+    '#description' => t("Name or page that the gallery appears on. Please not that the menu cache should be rebuilt after changing this item."),
+    '#required' => TRUE,
+  );
+
+  $form['picasa_full_size'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Full Image Size'),
+    '#default_value' => variable_get('picasa_full_size', 600),
+    '#size' => 4,
+    '#maxlength' => 4,
+    '#description' => t("The single image size."),
+    '#required' => TRUE,
+  );
+  
+  $form['picasa_thumbnail_size'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Thumbnail Image Size'),
+    '#default_value' => variable_get('picasa_thumbnail_size', 150),
+    '#size' => 4,
+    '#maxlength' => 4,
+    '#description' => t("The size of the gallery thumbnails."),
+    '#required' => TRUE,
+  );
+
+  return system_settings_form($form);
+} // function picasa_admin()
+
+/**
+ * Implements hook_menu().
+ */
+function picasa_menu() {
+
+  $items = array();
+
+  // The main settings page
+  $items['admin/settings/picasa'] = array(
+    'title' => 'Picasa module settings',
+    'description' => 'Description of your picasa module settings page',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('picasa_admin'),
+    'access arguments' => array('administer picasa'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $gallery_name = variable_get('picasa_gallery_name', 'gallery');
+
+  // main content
+  $items[$gallery_name] = array(
+    'title' => 'Picasa Gallery',
+    'page callback' => 'picasa_main',
+    'access arguments' => array('access picasa'),
+    'file' => 'functions/picasa.main.inc',
+    'type' => MENU_CALLBACK
+  );
+
+  // main content
+  $items[$gallery_name . '/%'] = array(
+    'title' => 'Picasa Gallery',
+    'page callback' => 'picasa_main',
+    'access arguments' => array('access picasa'),
+    'file' => 'functions/picasa.main.inc',
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK
+  );
+
+  // main content
+  $items[$gallery_name . '/%/%'] = array(
+    'title' => 'Picasa Gallery',
+    'page callback' => 'picasa_main',
+    'access arguments' => array('access picasa'),
+    'file' => 'functions/picasa.main.inc',
+    'page arguments' => array(1, 2),
+    'type' => MENU_CALLBACK
+  );
+
+  return $items;
+} // function picasa_menu()
+
+/**
+ * Implements hook_block_info().
+ */
+function picasa_block_info() {
+
+  // Define the block
+  $blocks['picasa_block'] = array(
+    'info' => t('Picasa Gallery'), //The name that will appear in the block list.
+    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+  );
+
+  // Return the block
+  return $blocks;
+} // function picasa_block_info()
+
+/**
+ * Implements hook_block_view().
+ *
+ * Prepares the contents of the block.
+ */
+function picasa_block_view($delta = '') {
+
+  // switch for the block to display
+  switch ($delta) {
+    // Is this the picasa block
+    case 'picasa_block':
+      // Define the block subject
+      $block['subject'] = t('Picasa block!');
+
+      // Check for user access
+      if (user_access('access content')) {
+        // Populate the block content
+        $block['content'] = t('This is sample picasa block content.');
+      }
+  }
+
+  // Return the block
+  return $block;
+} // function picasa_block_view()

@@ -1,0 +1,13 @@
+.picasa-gallery img, .picasa-gallery-photo img {
+  border: 1px solid #000; 
+  margin: 0 5px 5px 0; 
+  text-align: center;
+}
+.picasa-gallery, .picasa-gallery-photo {
+  text-align: center;
+}
+.picasa-gallery ul, .picasa-gallery li {
+  padding: 0px;
+  margin: 0px;
+  display: inline-block;
+}

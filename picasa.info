@@ -1,0 +1,5 @@
+name = Picasa
+description = "Display Picasa galleries on your site."
+core = 7.x
+files[] = picasa.test
+configure = admin/config/content/picasa
